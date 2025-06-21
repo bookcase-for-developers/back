@@ -12,8 +12,8 @@ repositories {
 }
 
 subprojects {
-    group 'back.kong'
-    version '0.0.1-SNAPSHOT'
+    group 'kong'
+    version '1.0-SNAPSHOT'
 
     apply plugin: 'java'
     apply plugin: 'org.springframework.boot'
