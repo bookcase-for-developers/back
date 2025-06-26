@@ -12,31 +12,32 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class TokenRepositoryImpl implements TokenRepository {
     private final RedisTemplate<String, String> redisTemplate;
+    private static final String PREFIX = "token:";
     private static final int EXPIRE_DAY = 1;
 
     @Override
     public Optional<Long> findIdByToken(String token) {
         validateToken(token);
-        String value = redisTemplate.opsForValue().get(token);
+        String value = redisTemplate.opsForValue().get(PREFIX + token);
         return Optional.ofNullable(value == null ? null : Long.parseLong(value));
     }
 
     @Override
     public boolean isExist(String token) {
         validateToken(token);
-        return redisTemplate.opsForValue().get(token) != null;
+        return redisTemplate.opsForValue().get(PREFIX + token) != null;
     }
 
     @Override
     public void setIdByToken(String token, long id) {
         validateToken(token);
-        redisTemplate.opsForValue().set(token, String.valueOf(id), EXPIRE_DAY, TimeUnit.DAYS);
+        redisTemplate.opsForValue().set(PREFIX + token, String.valueOf(id), EXPIRE_DAY, TimeUnit.DAYS);
     }
 
     @Override
     public void deleteByToken(String token) {
         validateToken(token);
-        redisTemplate.delete(token);
+        redisTemplate.delete(PREFIX + token);
 
     }
 
