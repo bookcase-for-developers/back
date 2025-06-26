@@ -1,0 +1,5 @@
+token:
+  jwt:
+    secret-key: ${JWT_SECRET_KEY:this-is-secret-key-over-128-byte}
+    access-token-expiration: ${ACCESS_TOKEN_EXPIRATION:1800}
+    refresh-token-expiration: ${REFRESH_TOKEN_EXPIRATION:86400}

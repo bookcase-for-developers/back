@@ -1,3 +1,4 @@
 rootProject.name = 'back'
 include 'core'
 include 'web'
+include 'infra'
