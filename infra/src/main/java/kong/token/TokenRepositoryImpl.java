@@ -1,5 +1,6 @@
 package kong.token;
 
+import kong.token.exception.InvalidTokenException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
@@ -15,36 +16,33 @@ public class TokenRepositoryImpl implements TokenRepository {
 
     @Override
     public Optional<Long> findIdByToken(String token) {
-        if (!isValidToken(token)) {
-            return Optional.empty();
-        }
+        validateToken(token);
         String value = redisTemplate.opsForValue().get(token);
         return Optional.ofNullable(value == null ? null : Long.parseLong(value));
     }
 
     @Override
     public boolean isExist(String token) {
-        if (!isValidToken(token)) {
-            return false;
-        }
+        validateToken(token);
         return redisTemplate.opsForValue().get(token) != null;
     }
 
     @Override
     public void setIdByToken(String token, long id) {
-        if (isValidToken(token)) {
-            redisTemplate.opsForValue().set(token, String.valueOf(id), EXPIRE_DAY, TimeUnit.DAYS);
-        }
+        validateToken(token);
+        redisTemplate.opsForValue().set(token, String.valueOf(id), EXPIRE_DAY, TimeUnit.DAYS);
     }
 
     @Override
     public void deleteByToken(String token) {
-        if (isValidToken(token)) {
-            redisTemplate.delete(token);
-        }
+        validateToken(token);
+        redisTemplate.delete(token);
+
     }
 
-    private boolean isValidToken(String token) {
-        return token != null && !token.trim().isEmpty();
+    private void validateToken(String token) {
+        if (token == null || token.trim().isEmpty()) {
+            throw new InvalidTokenException();
+        }
     }
 }
