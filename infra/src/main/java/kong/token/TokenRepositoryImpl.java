@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @Repository
@@ -13,23 +14,37 @@ public class TokenRepositoryImpl implements TokenRepository {
     private static final int EXPIRE_DAY = 1;
 
     @Override
-    public Long getIdFromToken(String token) {
+    public Optional<Long> findIdByToken(String token) {
+        if (!isValidToken(token)) {
+            return Optional.empty();
+        }
         String value = redisTemplate.opsForValue().get(token);
-        return value != null ? Long.parseLong(value) : null;
+        return Optional.ofNullable(value == null ? null : Long.parseLong(value));
     }
 
     @Override
     public boolean isExist(String token) {
+        if (!isValidToken(token)) {
+            return false;
+        }
         return redisTemplate.opsForValue().get(token) != null;
     }
 
     @Override
-    public void setToken(String token, Long id) {
-        redisTemplate.opsForValue().set(token, id.toString(), EXPIRE_DAY, TimeUnit.DAYS);
+    public void setIdByToken(String token, long id) {
+        if (isValidToken(token)) {
+            redisTemplate.opsForValue().set(token, String.valueOf(id), EXPIRE_DAY, TimeUnit.DAYS);
+        }
     }
 
     @Override
     public void deleteByToken(String token) {
-        redisTemplate.delete(token);
+        if (isValidToken(token)) {
+            redisTemplate.delete(token);
+        }
+    }
+
+    private boolean isValidToken(String token) {
+        return token != null && !token.trim().isEmpty();
     }
 }
