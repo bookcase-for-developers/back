@@ -6,4 +6,5 @@ dependencies {
 
     // Redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'com.mysql:mysql-connector-j'
 }
