@@ -1,0 +1,17 @@
+spring:
+  redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:bookcase_for_developers}
+    username: ${MYSQL_USERNAME:root}
+    password: ${MYSQL_PASSWORD:251414}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+token:
+  jwt:
+    secret-key: ${JWT_SECRET_KEY:this-is-secret-key-over-128-byte}
+    access-token-expiration: ${ACCESS_TOKEN_EXPIRATION:1800}
+    refresh-token-expiration: ${REFRESH_TOKEN_EXPIRATION:86400}
+
